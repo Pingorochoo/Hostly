@@ -7,13 +7,19 @@ const Register = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("/users/register", {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-    });
+    try {
+      await axios.post("/users/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
+      alert("register success");
+    } catch (error) {
+      alert(`register fail error: ${error.message}`);
+    }
+
     // setForm(initialForm);
   };
   return (

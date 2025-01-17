@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 const initialForm = { email: "", password: "" };
@@ -6,8 +7,18 @@ const Login = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await axios.post("/users/login", {
+        email: form.email,
+        password: form.password,
+      });
+      alert("login success");
+      // setForm(initialForm);
+    } catch (error) {
+      alert(`register fail error: ${error.message}`);
+    }
   };
 
   return (
