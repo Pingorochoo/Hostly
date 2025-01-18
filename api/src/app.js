@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./routes");
 const dbConnect = require("./config/dbConnect");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 //initializations
 const app = express();
@@ -19,5 +20,8 @@ app.use(
     origin: "http://localhost:2000",
   })
 );
+app.use(cookieParser());
+
+//routes
 app.use(router);
 module.exports = app;
