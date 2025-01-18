@@ -1,19 +1,23 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useUser } from "../store";
 const initialForm = { email: "", password: "" };
 const Login = () => {
   const [form, setForm] = useState(initialForm);
+  const { setUser } = useUser();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/users/login", {
+      const { data } = await axios.post("/users/login", {
         email: form.email,
         password: form.password,
       });
+      setUser(data);
+      // console.log(data);
       alert("login success");
       // setForm(initialForm);
     } catch (error) {
