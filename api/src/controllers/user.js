@@ -18,12 +18,20 @@ const login = async (req, res) => {
     if (userDoc && (await userDoc.passwordMatch(password))) {
       const { _id, name } = userDoc;
       const token = generateToken(_id);
-      res.cookie("token", token).json({
-        _id,
-        name,
-        email,
-        token,
-      });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          maxAge: 24 * 60 * 60 * 1000,
+        })
+        .json({
+          _id,
+          name,
+          email,
+          token,
+        });
+
     } else {
       throw new Error("Invalid credentials");
     }
@@ -32,25 +40,37 @@ const login = async (req, res) => {
   }
 };
 const getLoggedInUser = async (req, res) => {
-  const {token}=req.cookies
-  console.log(token); 
+  const { token } = req.cookies;
   try {
-    if(token){
-      const {id}= verifyToken(token)
-      console.log(id);
-      const {name,email}=await User.findById(id)
-      res.status(200).json({name,email});
-    }
-    else {
-      console.log('ga');
+    if (token) {
+      const { id } = verifyToken(token);
+      const { name, email } = await User.findById(id);
+      res.status(200).json({ name, email });
+    } else {
       res.status(200).json(null);
     }
   } catch (error) {
     res.status(500).json({ user: "not user" });
   }
 };
+
+const logout = (req, res) => {
+  try {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 0,
+      })
+      .json({ message: "logout successfully" });
+  } catch (error) {
+    res.status(500).json({ message: `Error during logout, message: ${error.message}` });
+  }
+};
 module.exports = {
   register,
   login,
-  getLoggedInUser
+  getLoggedInUser,
+  logout,
 };
