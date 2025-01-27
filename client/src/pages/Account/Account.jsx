@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import AccountNavbar from "../components/AccountNavbar";
-import { useUser } from "../store";
+import AccountNavbar from "./components/AccountNavbar";
+import { useUser } from "../../store";
+import Places from "../Places/Places";
 
 const Account = () => {
   const { user, setUser } = useUser();
 
   let { subpage } = useParams();
+
   if (subpage === undefined) {
     subpage = "account";
   }
@@ -26,6 +28,7 @@ const Account = () => {
           </button>
         </div>
       )}
+      {subpage === "places" && <Places />}
     </div>
   );
 };

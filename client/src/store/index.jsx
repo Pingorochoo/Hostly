@@ -12,10 +12,11 @@ const UserProvider = ({ children }) => {
   const getLoggedInUser = async () => {
     try {
       const { data } = await axios.get("/users/me");
-      setLoading(false);
       setUser(data);
+      setLoading(false);
     } catch (error) {
-      throw new Error(`Failed to fetch user data message: ${error.message}`);
+      setLoading(false);
+      console.error(`Failed to fetch user data message: ${error.message}`);
     }
   };
   useEffect(() => {
