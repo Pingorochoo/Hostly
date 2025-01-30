@@ -8,7 +8,6 @@ const initialFormState = {
   title: "",
   address: "",
   addedPhotos: [], //photos
-  photoLink: "", //not
   description: "",
   perks: [],
   extraInfo: "",
@@ -50,8 +49,7 @@ const PlaceForm = () => {
       />
       <FormField title="photos" description="upload at least 5 photos to give guests a clear view of your space">
         <InputPhotos
-          handleForm={handleForm}
-          photoLink={form.photoLink}
+          setForm={setForm}
           addedPhotos={form.addedPhotos}
         />
       </FormField>

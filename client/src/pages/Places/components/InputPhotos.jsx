@@ -1,9 +1,26 @@
-const InputPhotos = ({ handleForm, photoLink, addedPhotos }) => {
+import axios from "axios";
+import { useState } from "react";
+const InputPhotos = ({ setForm, addedPhotos }) => {
+  const [photoUrl, setPhotoUrl] = useState("");
+  const handlePhotoUrl = async (e) => {
+    setPhotoUrl(e.target.value);
+  };
   const addPhotoByLink = async (e) => {
     e.preventDefault();
+    if (!photoUrl || !/^https?:\/\/[^\s]+$/.test(photoUrl)) {
+      alert("Please enter a valid URL.");
+      return;
+    }
+    const { data: filename } = await axios.post("places/photos/url", {
+      imageUrl: photoUrl,
+    });
+    setForm((prev) => ({
+      ...prev,
+      addedPhotos: [...prev.addedPhotos, filename],
+    }));
+    setPhotoUrl("")
   };
-  const uploadPhoto = () => {
-  };
+  const uploadPhoto = (e) => {};
   return (
     <>
       <div className="flex gap-2">
@@ -11,8 +28,8 @@ const InputPhotos = ({ handleForm, photoLink, addedPhotos }) => {
           type="text"
           name="photoLink"
           placeholder="paste image url here"
-          value={photoLink}
-          onChange={handleForm}
+          value={photoUrl}
+          onChange={handlePhotoUrl}
         />
         <button
           className="bg-gray-200 px-4 rounded-2xl my-1"
@@ -22,6 +39,12 @@ const InputPhotos = ({ handleForm, photoLink, addedPhotos }) => {
         </button>
       </div>
       <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {addedPhotos.length > 0 &&
+          addedPhotos.map((filename) => (
+            <div className="rounded-2xl overflow-hidden" key={filename}>
+              <img src={`http://localhost:5001/${filename}`} alt="filename" />
+            </div>
+          ))}
         <label className="cursor-pointer flex justify-center items-center gap-1 border bg-transparent rounded-2xl p-8 text-2xl text-gray-600">
           <input
             type="file"
