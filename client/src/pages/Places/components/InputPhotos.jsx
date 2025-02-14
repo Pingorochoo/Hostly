@@ -5,6 +5,13 @@ const InputPhotos = ({ setForm, addedPhotos }) => {
   const handlePhotoUrl = async (e) => {
     setPhotoUrl(e.target.value);
   };
+  const handlePhotos = (filenames) => {
+    const newPhotos = Array.isArray(filenames) ? [...filenames] : [filenames];
+    setForm((prev) => ({
+      ...prev,
+      addedPhotos: [...prev.addedPhotos, ...newPhotos],
+    }));
+  };
   const addPhotoByLink = async (e) => {
     e.preventDefault();
     if (!photoUrl || !/^https?:\/\/[^\s]+$/.test(photoUrl)) {
@@ -14,13 +21,31 @@ const InputPhotos = ({ setForm, addedPhotos }) => {
     const { data: filename } = await axios.post("places/photos/url", {
       imageUrl: photoUrl,
     });
-    setForm((prev) => ({
-      ...prev,
-      addedPhotos: [...prev.addedPhotos, filename],
-    }));
-    setPhotoUrl("")
+    handlePhotos(filename);
+    setPhotoUrl("");
   };
-  const uploadPhoto = (e) => {};
+  const uploadPhoto = async (e) => {
+    try {
+      const {
+        target: { files },
+      } = e;
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append("photos", files[i]);
+      }
+      const res = await axios.post("places/photos/upload", formData, {
+        headers: { "Content-type": "multipart/form-data" },
+      });
+      console.log(res);
+
+      const { data } = res;
+      console.log(data);
+
+      handlePhotos(data);
+    } catch (error) {
+      throw new Error(`Failed to upload photo message: ${error.message}`);
+    }
+  };
   return (
     <>
       <div className="flex gap-2">
