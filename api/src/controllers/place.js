@@ -20,6 +20,12 @@ const uploadPhotoByUrl = async (req, res) => {
     throw new Error(error);
   }
 };
+const uploadPhotos = async (req, res) => {
+    const files = req.files;
+    const filenamamesArray = files.map((file) => file.filename);
+    res.json(filenamamesArray);
+};
 module.exports = {
   uploadPhotoByUrl,
+  uploadPhotos,
 };
