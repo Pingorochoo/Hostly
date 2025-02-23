@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PlacePerkSelector from "./PlacePerkSelector";
 import InputPhotos from "./InputPhotos";
 import FormField from "./FormField";
+import axios from "axios";
 const initialFormState = {
   title: "",
   address: "",
@@ -26,7 +27,7 @@ const PlaceForm = () => {
 
   async function savePlace(e) {
     e.preventDefault();
-    // await axios.post("/places", form);
+    await axios.post("/places", form);
     navigate("/account/places")
   }
   function handleCancel(e) {
