@@ -31,7 +31,7 @@ const createPlace = async (req, res) => {
   const {
     title,
     address,
-    addedPhotos,
+    photos,
     description,
     perks,
     extraInfo,
@@ -42,22 +42,21 @@ const createPlace = async (req, res) => {
   } = req.body;
   const { token } = req.cookies;
   const { id } = verifyToken(token);
-  if (id) {
-    const placeDoc = await Place.create({
-      owener: id,
-      title,
-      address,
-      photos: addedPhotos,
-      description,
-      perks,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-      price,
-    });
-    res.json(placeDoc);
-  } else res.status(400).json("Invalid token");
+  if (!id) return res.status(400).json("Invalid token");
+  const placeDoc = await Place.create({
+    owener: id,
+    title,
+    address,
+    photos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    price,
+  });
+  res.json(placeDoc);
 };
 const getUserPlaces = async (req, res) => {
   const { token } = req.cookies;
@@ -67,9 +66,28 @@ const getUserPlaces = async (req, res) => {
     res.json(places);
   } else res.json("Invalid token");
 };
+const getPlace = async (req, res) => {
+  const { id } = req.params;
+  const place = await Place.findById(id, { _id: 0, __v: 0, owener: 0 });
+  if (!id) return res.status(400).json("Invalid id");
+  //if(!place)return res.status(400).json("Place not found")
+  return res.json(place);
+};
+
+const updatePlace = async (req, res) => {
+  const { id } = req.params;
+  const { token } = req.cookies;
+  const { id: loggedUserId } = verifyToken(token);
+  const place = await Place.findByIdAndUpdate(id, req.body, { new: true });
+  if (place.owener.toString() !== loggedUserId)
+    return res.status(400).json("You are not the owner of this place");
+  res.json(place);
+};
 module.exports = {
   uploadPhotoByUrl,
   uploadPhotos,
   createPlace,
   getUserPlaces,
+  getPlace,
+  updatePlace,
 };
