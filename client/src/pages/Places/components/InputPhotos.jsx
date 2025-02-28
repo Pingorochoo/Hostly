@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
-const InputPhotos = ({ setForm, addedPhotos }) => {
+import AdddedPhoto from "./AddedPhoto";
+const InputPhotos = ({ setForm, photos }) => {
   const [photoUrl, setPhotoUrl] = useState("");
   const handlePhotoUrl = async (e) => {
     setPhotoUrl(e.target.value);
@@ -9,11 +10,10 @@ const InputPhotos = ({ setForm, addedPhotos }) => {
     const newPhotos = Array.isArray(filenames) ? [...filenames] : [filenames];
     setForm((prev) => ({
       ...prev,
-      addedPhotos: [...prev.addedPhotos, ...newPhotos],
+      photos: [...prev.photos, ...newPhotos],
     }));
   };
-  const addPhotoByLink = async (e) => {
-    e.preventDefault();
+  const addPhotoByLink = async () => {
     if (!photoUrl || !/^https?:\/\/[^\s]+$/.test(photoUrl)) {
       alert("Please enter a valid URL.");
       return;
@@ -36,14 +36,16 @@ const InputPhotos = ({ setForm, addedPhotos }) => {
       const res = await axios.post("places/photos/upload", formData, {
         headers: { "Content-type": "multipart/form-data" },
       });
-      console.log(res);
-
       const { data } = res;
-      console.log(data);
-
       handlePhotos(data);
     } catch (error) {
       throw new Error(`Failed to upload photo message: ${error.message}`);
+    }
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addPhotoByLink();
     }
   };
   return (
@@ -55,20 +57,25 @@ const InputPhotos = ({ setForm, addedPhotos }) => {
           placeholder="paste image url here"
           value={photoUrl}
           onChange={handlePhotoUrl}
+          onKeyDown={handleKeyDown}
         />
         <button
           className="bg-gray-200 px-4 rounded-2xl my-1"
           onClick={addPhotoByLink}
+          type="button"
         >
           Add&nbsp;photo
         </button>
       </div>
       <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {addedPhotos.length > 0 &&
-          addedPhotos.map((filename) => (
-            <div className="rounded-2xl overflow-hidden" key={filename}>
-              <img src={`http://localhost:5001/${filename}`} alt="filename" />
-            </div>
+        {photos.length > 0 &&
+          photos.map((filename, index) => (
+            <AdddedPhoto
+              key={index}
+              photo={filename}
+              setForm={setForm}
+              photos={photos}
+            />
           ))}
         <label className="cursor-pointer flex justify-center items-center gap-1 border bg-transparent rounded-2xl p-8 text-2xl text-gray-600">
           <input

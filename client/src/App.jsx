@@ -21,8 +21,7 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          <Route path="/account/:subpage?" element={<Account />} />
-          <Route path="/account/:subpage/:action" element={<Account />} />
+          <Route path="/account/:subpage?/:action?/:id?" element={<Account />} />
         </Route>
         </Route>
       </Routes>

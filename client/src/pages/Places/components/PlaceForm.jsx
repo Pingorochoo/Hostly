@@ -1,6 +1,5 @@
-// import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import PlacePerkSelector from "./PlacePerkSelector";
 import InputPhotos from "./InputPhotos";
 import FormField from "./FormField";
@@ -8,7 +7,7 @@ import axios from "axios";
 const initialFormState = {
   title: "",
   address: "",
-  addedPhotos: [], //photos
+  photos: [],
   description: "",
   perks: [],
   extraInfo: "",
@@ -20,6 +19,13 @@ const initialFormState = {
 const PlaceForm = () => {
   const [form, setForm] = useState(initialFormState);
   const navigate = useNavigate();
+  const { id } = useParams();
+  useEffect(() => {
+    if (!id) return;
+    axios.get("/places/" + id).then(({ data }) => {
+      setForm(data);
+    });
+  }, []);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,8 +33,9 @@ const PlaceForm = () => {
 
   async function savePlace(e) {
     e.preventDefault();
-    await axios.post("/places", form);
-    navigate("/account/places")
+    if (id) await axios.put(`/places/${id}`, form);
+    else await axios.post("/places", form);
+    navigate("/account/places");
   }
   function handleCancel(e) {
     e.preventDefault();
@@ -48,11 +55,11 @@ const PlaceForm = () => {
         value={form.address}
         onChange={handleForm}
       />
-      <FormField title="photos" description="upload at least 5 photos to give guests a clear view of your space">
-        <InputPhotos
-          setForm={setForm}
-          addedPhotos={form.addedPhotos}
-        />
+      <FormField
+        title="photos"
+        description="upload at least 5 photos to give guests a clear view of your space"
+      >
+        <InputPhotos setForm={setForm} photos={form.photos} />
       </FormField>
       <FormField
         name="description"
