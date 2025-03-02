@@ -83,6 +83,10 @@ const updatePlace = async (req, res) => {
     return res.status(400).json("You are not the owner of this place");
   res.json(place);
 };
+const getPlaces = async (req, res) => { 
+  const places = await Place.find({}, { __v: 0 });
+  res.json(places);
+};
 module.exports = {
   uploadPhotoByUrl,
   uploadPhotos,
@@ -90,4 +94,5 @@ module.exports = {
   getUserPlaces,
   getPlace,
   updatePlace,
+  getPlaces,
 };

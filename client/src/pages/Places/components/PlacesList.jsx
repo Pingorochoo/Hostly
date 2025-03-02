@@ -20,7 +20,7 @@ const PlacesList = ({ places }) => {
           <Link
             to={`update/${_id}`}
             key={_id}
-            className="flex gap-6 bg-gray-100 p-5 rounded-2xl shadow-md hover:bg-gray-200 transition"
+            className="flex items-center gap-6 bg-gray-100 p-5 rounded-2xl shadow-md hover:bg-gray-200 transition"
           >
             <div className="w-40 h-40 flex-shrink-0">
               <img
@@ -37,7 +37,7 @@ const PlacesList = ({ places }) => {
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">{address}</p>
 
-                <p className="text-sm text-gray-700 mt-2 line-clamp-3">
+                <p className="text-sm text-gray-700 mt-2 line-clamp-5 sm:line-clamp-3 md:line-clamp-2">
                   {description}
                 </p>
               </div>

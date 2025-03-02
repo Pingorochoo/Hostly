@@ -7,13 +7,15 @@ import PlacesList from "./components/PlacesList";
 const Places = () => {
   const [places, setPlaces] = useState([]);
   const { pathname } = useLocation();
-
   const { action } = useParams();
-  useEffect(() => {
+  const fetchUserPlaces = () => {
     if (pathname === "/account/places")
-      axios.get("/places").then(({ data }) => {
+      axios.get("/places/user").then(({ data }) => {
         setPlaces(data);
       });
+  };
+  useEffect(() => {
+    fetchUserPlaces();
   }, [pathname]);
   return (
     <div>
