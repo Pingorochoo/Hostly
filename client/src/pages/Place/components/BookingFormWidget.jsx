@@ -1,17 +1,42 @@
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const BookingFormWidget = ({ place }) => {
-  if (!place) return;
   const initialForm = {
-    placeId: place?._id,
+    placeId: "",
     checkInDate: "",
     checkOutDate: "",
-    ghests: "1",
-    numberNights: 2,
+    guests: "1",
+    numberNights: 0,
   };
+  const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
-  function handleForm() {}
-  function booking() {}
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, placeId: place._id }));
+  }, [place]);
+  if (!place) return;
+  function handleForm(e) {
+    const { name, value } = e.target;
+    let nights = 0;
+    if (name === "checkInDate" || name === "checkOutDate") {
+      const checkInDate =
+        name === "checkInDate" ? new Date(value) : new Date(form.checkInDate);
+      const checkOutDate =
+        name === "checkOutDate" ? new Date(value) : new Date(form.checkOutDate);
+      nights = differenceInCalendarDays(checkOutDate, checkInDate);
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+      numberNights: nights,
+    }));
+  }
+  function booking() {
+    axios.post("/booking", form).then(({ data }) => console.log(data));
+    navigate("/account/bookings");
+  }
 
   return (
     <div className="bg-white shadow p-4 rounded-2xl overflow-hidden">
@@ -23,6 +48,7 @@ const BookingFormWidget = ({ place }) => {
             <input
               type="date"
               className="text-right w-[120px]"
+              name="checkInDate"
               value={form.checkInDate}
               onChange={handleForm}
             />
@@ -32,6 +58,7 @@ const BookingFormWidget = ({ place }) => {
             <input
               type="date"
               className="text-right w-[120px]"
+              name="checkOutDate"
               value={form.checkOutDate}
               onChange={handleForm}
             />
@@ -41,19 +68,28 @@ const BookingFormWidget = ({ place }) => {
           <label>Number of guests:</label>
           <input
             type="number"
-            min={initialForm.ghests}
+            name="guests"
+            min={1}
             max={place?.maxGuests}
-            value={form.ghests}
+            value={form.guests}
             onChange={handleForm}
           />
         </div>
       </div>
-      <button onClick={booking} className="primary">
-        Book this place&nbsp;
+      <button onClick={booking} className="primary mt-4">
+        Reserve
         {form.numberNights > 0 && (
-          <span>for ${form.numberNights * place.price}</span>
+          <span>&nbsp;for ${form.numberNights * place.price}</span>
         )}
       </button>
+      {form.numberNights > 0 && (
+        <div className="mt-4 flex justify-between">
+          <p>
+            ${place?.price} x {form.numberNights} nights
+          </p>
+          <p>${place?.price * form.numberNights}</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -68,7 +68,7 @@ const getUserPlaces = async (req, res) => {
 };
 const getPlace = async (req, res) => {
   const { id } = req.params;
-  const place = await Place.findById(id, { _id: 0, __v: 0, owener: 0 });
+  const place = await Place.findById(id, { __v: 0, owener: 0 });
   if (!id) return res.status(400).json("Invalid id");
   //if(!place)return res.status(400).json("Place not found")
   return res.json(place);
@@ -83,7 +83,7 @@ const updatePlace = async (req, res) => {
     return res.status(400).json("You are not the owner of this place");
   res.json(place);
 };
-const getPlaces = async (req, res) => { 
+const getPlaces = async (req, res) => {
   const places = await Place.find({}, { __v: 0 });
   res.json(places);
 };
