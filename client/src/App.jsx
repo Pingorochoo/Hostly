@@ -6,6 +6,7 @@ import axios from "axios";
 import Account from "./pages/Account/Account";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import Index from "./pages/Index";
+import Place from "./pages/Place/Place";
 
 axios.defaults.baseURL = "http://localhost:5001";
 axios.defaults.withCredentials = true;
@@ -15,14 +16,18 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-        <Route index element={<Index/>} />
-        <Route element={<ProtectedRoute redirectIfAuthenticated/>}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
-          <Route path="/account/:subpage?/:action?/:id?" element={<Account />} />
-        </Route>
+          <Route index element={<Index />} />
+          <Route element={<ProtectedRoute redirectIfAuthenticated />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route
+              path="/account/:subpage?/:action?/:id?"
+              element={<Account />}
+            />
+            <Route path="/place/:id" element={<Place />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
