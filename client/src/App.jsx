@@ -7,6 +7,9 @@ import Account from "./pages/Account/Account";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import Index from "./pages/Index";
 import Place from "./pages/Place/Place";
+import Bookings from "./pages/Bookings/Bookings";
+import Places from "./pages/Places/Places";
+import Profile from "./pages/Profile/Profile";
 
 axios.defaults.baseURL = "http://localhost:5001";
 axios.defaults.withCredentials = true;
@@ -22,10 +25,14 @@ function App() {
             <Route path="/register" element={<Register />} />
           </Route>
           <Route element={<ProtectedRoute />}>
-            <Route
-              path="/account/:subpage?/:action?/:id?"
-              element={<Account />}
-            />
+            <Route path="/account" element={<Account />}>
+              <Route path="/account/profile" element={<Profile />} />
+              <Route path="/account/bookings/:id?" element={<Bookings />} />
+              <Route
+                path="/account/places/:action?/:id?"
+                element={<Places />}
+              />
+            </Route>
             <Route path="/place/:id" element={<Place />} />
           </Route>
         </Route>

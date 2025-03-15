@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import FullScreenGallery from "./components/FullScreenGallery";
-import PlaceGridPhotos from "./components/PlaceGridPhotos";
+import FullScreenGallery from "../../components/FullScreenGallery";
+import PlaceGridPhotos from "../../components/PlaceGridPhotos";
 import BookingFormWidget from "./components/BookingFormWidget";
 
 const Place = () => {

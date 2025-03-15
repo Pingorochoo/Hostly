@@ -18,19 +18,22 @@ const BookingFormWidget = ({ place }) => {
   if (!place) return;
   function handleForm(e) {
     const { name, value } = e.target;
-    let nights = 0;
     if (name === "checkInDate" || name === "checkOutDate") {
+      let nights = 0;
       const checkInDate =
         name === "checkInDate" ? new Date(value) : new Date(form.checkInDate);
       const checkOutDate =
         name === "checkOutDate" ? new Date(value) : new Date(form.checkOutDate);
       nights = differenceInCalendarDays(checkOutDate, checkInDate);
+      setForm((prev) => ({
+        ...prev,
+        numberNights: nights,
+      }));
     }
 
     setForm((prev) => ({
       ...prev,
       [name]: value,
-      numberNights: nights,
     }));
   }
   function booking() {

@@ -1,34 +1,28 @@
-import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import AccountNavbar from "./components/AccountNavbar";
-import { useUser } from "../../store";
-import Places from "../Places/Places";
+import { useEffect, useState } from "react";
 
 const Account = () => {
-  const { user, setUser } = useUser();
+  const { pathname } = useLocation();
+  const [subpage, setSubPage] = useState("");
+  const routeMap = {
+    "/account/profile": "profile",
+    "/account/bookings": "bookings",
+    "/account/places": "places",
+  };
+  const updateSubpage = () => {
+    const matchedRoute = Object.keys(routeMap).find((route) => pathname.startsWith(route));
+    setSubPage(matchedRoute ? routeMap[matchedRoute] : "");
+  };
 
-  let { subpage } = useParams();
-
-  if (subpage === undefined) {
-    subpage = "account";
-  }
-  async function logout() {
-    await axios.post("/users/logout");
-    setUser(null);
-  }
+  useEffect(() => {
+    updateSubpage();
+  }, [pathname]);
 
   return (
     <div>
       <AccountNavbar subpage={subpage} />
-      {subpage === "account" && (
-        <div className="text-center max-w-lg mx-auto w-full mt-8">
-          logged in as {user?.name} ({user?.email})<br />
-          <button className="primary max-w-sm mt-2" onClick={logout}>
-            Logout
-          </button>
-        </div>
-      )}
-      {subpage === "places" && <Places />}
+      <Outlet />
     </div>
   );
 };

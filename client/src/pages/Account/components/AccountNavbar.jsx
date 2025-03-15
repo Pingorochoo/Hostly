@@ -12,7 +12,7 @@ const AccountNavbar = ({ subpage }) => {
   };
   return (
     <nav className="w-full flex justify-center mt-8 gap-2">
-      <Link className={navClasses("account")} to={"/account"}>
+      <Link className={navClasses("profile")} to={"/account/profile"}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
