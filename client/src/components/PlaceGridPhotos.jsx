@@ -1,3 +1,5 @@
+import apiUrl from "../../config/api";
+
 const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
   return (
     <div className="relative">
@@ -15,7 +17,7 @@ const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
                 }
               >
                 <img
-                  src={"http://localhost:5001/" + photo}
+                  src={apiUrl + photo}
                   alt="place"
                   className="object-cover w-full h-full"
                 />

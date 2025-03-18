@@ -1,62 +1,82 @@
 import { useState } from "react";
 import tw from "tailwind-styled-components";
-const MyBotton = tw.button`
-    cursor-pointer 
-    absolute 
-    bottom-1
-    text-white
-    bg-black
-    bg-opacity-20
-    hover:bg-opacity-50
-    transition
-    duration-100 
-    ease-out
-    rounded-full 
-    p-1
+import apiUrl from "../../../../config/api";
+
+const IconButton = tw.button`
+  cursor-pointer 
+  absolute 
+  bottom-4
+  flex
+  items-center
+  justify-center
+  text-white
+  bg-black/25
+  hover:bg-black/40
+  transition-all
+  duration-200 
+  ease-in-out
+  rounded-full 
+  w-9
+  h-9
+  shadow-md
+  backdrop-blur-[2px]
+  hover:scale-105
+  active:scale-95
 `;
 
 const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
   const [opacity, setOpacity] = useState(" opacity-0");
+
   function removePhoto() {
     setForm((prev) => ({
       ...prev,
       photos: photos.filter((pic) => pic !== photo),
     }));
   }
+
   function selectMainPhoto() {
     setForm((prev) => ({
       ...prev,
       photos: [photo, ...photos.filter((pic) => pic !== photo)],
     }));
   }
+
   function handleMouseOver() {
     setOpacity(" opacity-100");
   }
+
   function handleMouseLeave() {
     setOpacity(" opacity-0");
   }
+
   return (
     <div
-      className={"h-32 relative"}
+      className="relative aspect-square group"
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
     >
       <img
-        src={"http://localhost:5001/" + photo}
-        className="rounded-2xl w-full h-full object-cover"
+        src={apiUrl + photo}
+        className={`
+          w-full h-full object-cover rounded-2xl transition-all duration-300
+          ${selected ? 'ring-2 ring-primary shadow-md' : 'group-hover:brightness-95'}
+        `}
         alt="place"
       />
-      <MyBotton
-        className={"left-1" + (selected ? "" : opacity)}
+      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-b from-black/0 via-black/0 to-black/25${opacity} transition-opacity duration-200`} />
+      
+      <IconButton
+        className={`left-4${selected ? "" : opacity}`}
         onClick={selectMainPhoto}
         type="button"
+        title={selected ? "Main photo" : "Set as main photo"}
       >
-        {selected && (
+        {selected ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="w-6 h-6"
+            className="w-5 h-5 text-primary"
           >
             <path
               fillRule="evenodd"
@@ -64,15 +84,14 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
               clipRule="evenodd"
             />
           </svg>
-        )}
-        {!selected && (
+        ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
+            strokeWidth={2}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
@@ -81,23 +100,37 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
             />
           </svg>
         )}
-      </MyBotton>
-      <MyBotton className={"right-1" + opacity} onClick={removePhoto} type="button">
+      </IconButton>
+
+      <IconButton 
+        className={`right-4${opacity}`} 
+        onClick={removePhoto} 
+        type="button"
+        title="Remove photo"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
+          strokeWidth={2}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-5 h-5"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+            d="M6 18L18 6M6 6l12 12"
           />
         </svg>
-      </MyBotton>
+      </IconButton>
+
+      {selected && (
+        <div className="absolute top-4 left-4">
+          <span className="px-2.5 py-1.5 bg-black/25 text-white text-xs font-medium rounded-lg shadow-md backdrop-blur-[2px]">
+            Main Photo
+          </span>
+        </div>
+      )}
     </div>
   );
 };

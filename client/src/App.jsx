@@ -10,8 +10,8 @@ import Place from "./pages/Place/Place";
 import Bookings from "./pages/Bookings/Bookings";
 import Places from "./pages/Places/Places";
 import Profile from "./pages/Profile/Profile";
-
-axios.defaults.baseURL = "http://localhost:5001";
+import apiUrl from "../config/api";
+axios.defaults.baseURL = apiUrl;
 axios.defaults.withCredentials = true;
 
 function App() {
