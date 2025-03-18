@@ -13,8 +13,10 @@ export default {
         'background': '#ffffff',
         'text': '#000000',
       },
+      screens: {
+        'xs': '475px',
+      },
     },
   },
   plugins: [],
 }
-
