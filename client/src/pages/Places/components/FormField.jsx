@@ -1,19 +1,40 @@
 const InputHeader = ({ title, description }) => {
   return (
-    <>
-      <p className="text-2xl first-letter:uppercase">{title}</p>
+    <div className="mb-3">
+      <h3 className="text-gray-900 font-medium first-letter:uppercase mb-1">
+        {title}
+      </h3>
       {description && (
-        <span className="text-gray-500 text-sm">{description}</span>
+        <p className="text-gray-500 text-sm">{description}</p>
       )}
-    </>
+    </div>
   );
 };
+
 const InputField = ({ type = "text", isTextarea = false, ...rest }) => {
+  const baseClassName = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors";
+  
   if (isTextarea) {
-    return <textarea id={rest.name} {...rest} />;
+    return (
+      <textarea 
+        id={rest.name}
+        rows={4}
+        className={`${baseClassName} resize-none`}
+        {...rest}
+      />
+    );
   }
-  return <input type={type} id={rest.name} {...rest} />;
+  
+  return (
+    <input 
+      type={type}
+      id={rest.name}
+      className={baseClassName}
+      {...rest}
+    />
+  );
 };
+
 const FormField = ({
   title,
   description,
@@ -23,12 +44,11 @@ const FormField = ({
   ...rest
 }) => {
   const Wrapper = children ? "div" : "label";
+  
   return (
-    <Wrapper htmlFor={name}>
+    <Wrapper htmlFor={name} className="block">
       <InputHeader title={title || name} description={description} />
-      {children ? (
-        children
-      ) : (
+      {children || (
         <InputField
           name={name}
           placeholder={placeholder || title || name}
@@ -38,5 +58,4 @@ const FormField = ({
     </Wrapper>
   );
 };
-
 export default FormField;

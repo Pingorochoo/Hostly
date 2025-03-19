@@ -1,11 +1,11 @@
-import axios from "axios";
 import { useState } from "react";
-import AdddedPhoto from "./AddedPhoto";
+import axios from "axios";
+import AddedPhoto from "./AddedPhoto";
+
 const InputPhotos = ({ setForm, photos }) => {
-  const [photoUrl, setPhotoUrl] = useState("");
-  const handlePhotoUrl = async (e) => {
-    setPhotoUrl(e.target.value);
-  };
+  const [photoLink, setPhotoLink] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
   const handlePhotos = (filenames) => {
     const newPhotos = Array.isArray(filenames) ? [...filenames] : [filenames];
     setForm((prev) => ({
@@ -13,76 +13,91 @@ const InputPhotos = ({ setForm, photos }) => {
       photos: [...prev.photos, ...newPhotos],
     }));
   };
-  const addPhotoByLink = async () => {
-    if (!photoUrl || !/^https?:\/\/[^\s]+$/.test(photoUrl)) {
-      alert("Please enter a valid URL.");
-      return;
-    }
-    const { data: filename } = await axios.post("places/photos/url", {
-      imageUrl: photoUrl,
-    });
-    handlePhotos(filename);
-    setPhotoUrl("");
-  };
-  const uploadPhoto = async (e) => {
+  const addPhotoByLink = async (ev) => {
+    ev.preventDefault();
+    setIsUploading(true);
+    setUploadError(null);
+
     try {
-      const {
-        target: { files },
-      } = e;
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append("photos", files[i]);
-      }
-      const res = await axios.post("places/photos/upload", formData, {
-        headers: { "Content-type": "multipart/form-data" },
+      const { data: filename } = await axios.post("places/photos/url", {
+        imageUrl: photoLink,
       });
-      const { data } = res;
-      handlePhotos(data);
+      handlePhotos(filename);
+      setPhotoLink("");
     } catch (error) {
-      throw new Error(`Failed to upload photo message: ${error.message}`);
+      setUploadError(error?.response?.data?.error || "Failed to upload image");
+    } finally {
+      setIsUploading(false);
     }
   };
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addPhotoByLink();
+
+  const uploadPhoto = async (ev) => {
+    const files = ev.target.files;
+    const data = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      data.append("photos", files[i]);
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const { data: filenames } = await axios.post("/places/photos/upload", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      handlePhotos(filenames);
+    } catch (error) {
+      setUploadError(error?.response?.data?.error || "Failed to upload images");
+    } finally {
+      setIsUploading(false);
     }
   };
+
   return (
-    <>
+    <div>
       <div className="flex gap-2">
         <input
           type="text"
-          name="photoLink"
-          placeholder="paste image url here"
-          value={photoUrl}
-          onChange={handlePhotoUrl}
-          onKeyDown={handleKeyDown}
+          value={photoLink}
+          onChange={(ev) => setPhotoLink(ev.target.value)}
+          placeholder="Add using a link ....jpg"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
         />
         <button
-          className="bg-gray-200 px-4 rounded-2xl my-1"
           onClick={addPhotoByLink}
-          type="button"
+          className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isUploading || !photoLink}
         >
-          Add&nbsp;photo
+          {isUploading ? (
+            <div className="w-6 h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            "Add"
+          )}
         </button>
       </div>
+
+      {uploadError && (
+        <p className="text-red-500 text-sm mt-1">{uploadError}</p>
+      )}
+
       <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {photos.length > 0 &&
-          photos.map((filename, index) => (
-            <AdddedPhoto
+          photos.map((photo, index) => (
+            <AddedPhoto
               key={index}
-              photo={filename}
+              photo={photo}
               setForm={setForm}
               photos={photos}
+              selected={index === 0}
             />
           ))}
-        <label className="cursor-pointer flex justify-center items-center gap-1 border bg-transparent rounded-2xl p-8 text-2xl text-gray-600">
+        <label className="h-32 cursor-pointer flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-600 hover:bg-gray-100 transition-colors">
           <input
             type="file"
+            multiple
             className="hidden"
             onChange={uploadPhoto}
-            multiple
+            accept="image/*"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -90,19 +105,18 @@ const InputPhotos = ({ setForm, photos }) => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-8 h-8"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
             />
           </svg>
           Upload
         </label>
       </div>
-    </>
+    </div>
   );
 };
-
 export default InputPhotos;
