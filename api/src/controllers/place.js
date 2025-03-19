@@ -62,7 +62,7 @@ const getUserPlaces = async (req, res) => {
   const { token } = req.cookies;
   const { id } = verifyToken(token);
   if (id) {
-    const places = await Place.find({ owener: id });
+    const places = await Place.find({ owener: id }, { __v: 0 });
     res.json(places);
   } else res.json("Invalid token");
 };

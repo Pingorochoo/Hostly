@@ -22,11 +22,10 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:2000",
+    origin: ["http://localhost:2000", "http://192.168.0.236:2000"],
   })
 );
 app.use(cookieParser());
-
 //routes
 app.use(router);
 
