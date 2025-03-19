@@ -1,19 +1,38 @@
+import { useEffect, useState } from "react";
 import apiUrl from "../../config/api";
 
 const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
+  const [photosToShow, setPhotosToShow] = useState(2);
+
+  useEffect(() => {
+    const updatePhotosToShow = () => {
+      if (window.innerWidth >= 768) {
+        setPhotosToShow(4);
+      } else {
+        setPhotosToShow(2);
+      }
+    };
+
+    updatePhotosToShow();
+    window.addEventListener("resize", updatePhotosToShow);
+    return () => window.removeEventListener("resize", updatePhotosToShow);
+  }, []);
+
   return (
     <div className="relative">
       <div className="grid grid-cols-4 grid-rows-2 gap-2 h-96 rounded-2xl overflow-hidden">
         {photos.length > 0 &&
           photos.map((photo, i) => {
-            if (i > 4) return "";
+            if (i > photosToShow) return "";
             return (
               <div
                 key={i}
                 onClick={() => setShowAllPhotos(true)}
                 className={
                   "circular-gradient cursor-pointer " +
-                  (i === 0 ? "col-span-2 row-span-2" : "")
+                  (i === 0
+                    ? "col-span-2 row-span-2"
+                    : "col-span-2 md:col-span-1 md:row-span-1")
                 }
               >
                 <img

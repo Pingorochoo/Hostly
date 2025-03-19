@@ -45,22 +45,22 @@ const BookingFormWidget = ({ place }) => {
     <div className="bg-white shadow p-4 rounded-2xl overflow-hidden">
       <h3 className="text-2xl">Price: ${place?.price} / per night</h3>
       <div className="border rounded-2xl mt-4">
-        <div className="flex">
+        <div className="flex flex-col sm:flex-row">
           <div className="py-3 px-4 grow">
             <label>Check in date:</label>
             <input
               type="date"
-              className="text-right w-[120px]"
+              className="text-right max-w-[120px]"
               name="checkInDate"
               value={form.checkInDate}
               onChange={handleForm}
             />
           </div>
-          <div className="py-3 px-4 border-l grow">
+          <div className="py-3 px-4 border-t sm:border-l grow">
             <label>Check out date:</label>
             <input
               type="date"
-              className="text-right w-[120px]"
+              className="text-right max-w-[120px]"
               name="checkOutDate"
               value={form.checkOutDate}
               onChange={handleForm}
