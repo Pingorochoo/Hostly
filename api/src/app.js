@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:2000", "http://192.168.0.236:2000"],
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_LAN_URL],
   })
 );
 app.use(cookieParser());
