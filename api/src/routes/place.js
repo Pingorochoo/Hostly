@@ -7,12 +7,14 @@ const {
   getPlace,
   updatePlace,
   getPlaces,
+  cancelCreatePlace,
 } = require("../controllers/place");
 const { uploadPhotosMiddleware } = require("../middlwares/upload");
 const placeRouter = Router();
 placeRouter.post("/photos/url", uploadPhotoByUrl);
 placeRouter.post("/photos/upload", uploadPhotosMiddleware, uploadPhotos);
 placeRouter.post("/", createPlace);
+placeRouter.post("/cancel", cancelCreatePlace);
 
 placeRouter.get("/", getPlaces);
 placeRouter.get("/user", getUserPlaces);

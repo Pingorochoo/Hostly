@@ -1,19 +1,34 @@
 const { verifyToken } = require("../config/jwtToken");
 const Place = require("../models/Place");
-const { downloadImage } = require("../utils/imageDownloader");
+const { cloudinaryUploader, cloudinaryRemover } = require("../utils/cloudinaryUploader");
 const uploadPhotoByUrl = async (req, res) => {
   try {
     const { imageUrl } = req.body;
-    const newFilename= await downloadImage(imageUrl,req.app.locals.uploads);
-    res.json(newFilename);
+    const { secure_url, public_id } = await cloudinaryUploader(imageUrl);
+    res.json({ secure_url, public_id });
   } catch (error) {
     throw new Error(error);
   }
 };
 const uploadPhotos = async (req, res) => {
   const files = req.files;
-  const filenamamesArray = files.map((file) => file.filename);
-  res.json(filenamamesArray);
+  const imagesURIs = [];
+  for (const file of files) {
+    const base64String = file.buffer.toString("base64");
+    const dataURI = `data:${file.mimetype};base64,${base64String}`;
+    imagesURIs.push(dataURI);
+  }
+  const images = await cloudinaryUploader(imagesURIs);
+  res.json(images);
+};
+const cancelCreatePlace = async (req, res) => {
+  const { photosToRemove } = req.body;
+  if(photosToRemove.length === 0) return res.json({ message: "No images to delete" });
+  const response = await cloudinaryRemover(
+    photosToRemove.map((pic) => pic.public_id)
+  );
+  if (response) return res.json({ message: "Images deleted successfully" });
+  return res.status(400).json({ message: "Failed to delete images" });
 };
 const createPlace = async (req, res) => {
   const {
@@ -83,4 +98,5 @@ module.exports = {
   getPlace,
   updatePlace,
   getPlaces,
+  cancelCreatePlace,
 };

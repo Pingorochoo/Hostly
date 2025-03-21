@@ -1,6 +1,7 @@
 const multer = require("multer");
 const { parse } = require("path");
-const storage = multer.diskStorage({
+const memoryStorage = multer.memoryStorage();
+const diskStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, req.app.locals.uploads);
   },
@@ -10,6 +11,7 @@ const storage = multer.diskStorage({
     cb(null, newFilemame);
   },
 });
+const storage = memoryStorage;
 function fileFilter(req, file, cb) {
   if (file.mimetype?.includes("image/")) {
     cb(null, true);

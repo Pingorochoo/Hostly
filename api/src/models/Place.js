@@ -7,7 +7,12 @@ var placeSchema = new Schema({
   },
   title: String,
   address: String,
-  photos: [String],
+  photos: [
+    {
+      secure_url: String,
+      public_id: String,
+    },
+  ],
   description: String,
   perks: [String],
   extraInfo: String,
