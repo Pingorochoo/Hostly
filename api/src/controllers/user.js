@@ -21,8 +21,8 @@ const login = async (req, res) => {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Strict",
+          secure: process.env.NODE_ENVIROMENT === "production",
+          sameSite: process.env.NODE_ENVIROMENT === "production" ? "None" : "Lax",
           maxAge: 24 * 60 * 60 * 1000,
         })
         .json({
@@ -31,7 +31,6 @@ const login = async (req, res) => {
           email,
           token,
         });
-
     } else {
       throw new Error("Invalid credentials");
     }
@@ -65,7 +64,9 @@ const logout = (req, res) => {
       })
       .json({ message: "logout successfully" });
   } catch (error) {
-    res.status(500).json({ message: `Error during logout, message: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error during logout, message: ${error.message}` });
   }
 };
 module.exports = {
