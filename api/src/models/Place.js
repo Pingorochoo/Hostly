@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 var placeSchema = new Schema({
-  owener: {
+  owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },

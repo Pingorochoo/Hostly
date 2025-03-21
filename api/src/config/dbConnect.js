@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 mongoose.connection.once("open", () => {
   console.log(`Database connected to ${mongoose.connection.host}`);
 });
@@ -8,5 +9,10 @@ mongoose.connection.on("error", (error) => {
 const dbConnect = async () => {
   await mongoose.connect(process.env.MONGO_URI);
 };
-
-module.exports = dbConnect;
+const closeConnection = async () => {
+  await mongoose.connection.close();
+};
+const dropDataBase = async () => {
+  await mongoose.connection.dropDatabase();
+};
+module.exports = { dbConnect, closeConnection, dropDataBase };

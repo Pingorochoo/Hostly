@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./routes");
-const dbConnect = require("./config/dbConnect");
+const {dbConnect} = require("./config/dbConnect");
 const cookieParser = require("cookie-parser");
 const { join } = require("path");
 require("dotenv").config();
