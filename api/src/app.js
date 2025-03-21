@@ -1,11 +1,13 @@
 const express = require("express");
-const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./routes");
-const {dbConnect} = require("./config/dbConnect");
+const { dbConnect } = require("./config/dbConnect");
 const cookieParser = require("cookie-parser");
 const { join } = require("path");
+const notFound = require("./middlwares/notFound");
+const errorHandler = require("./middlwares/errorHandler");
 require("dotenv").config();
+
 //initializations
 const app = express();
 dbConnect();
@@ -17,7 +19,10 @@ app.use((req, res, next) => {
   next();
 });
 //middlewares
-app.use(morgan("dev"));
+if (process.env.NODE_ENV !== "production") {
+  const morgan = require("morgan");
+  app.use(morgan("dev"));
+}
 app.use(express.json());
 app.use(
   cors({
@@ -28,6 +33,10 @@ app.use(
 app.use(cookieParser());
 //routes
 app.use(router);
+
+//error handlers
+app.use(notFound);
+app.use(errorHandler);
 
 //public
 app.use(express.static(join(__dirname, "public", "uploads")));

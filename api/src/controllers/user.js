@@ -21,8 +21,8 @@ const login = async (req, res) => {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENVIROMENT === "production",
-          sameSite: process.env.NODE_ENVIROMENT === "production" ? "None" : "Lax",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
           maxAge: 24 * 60 * 60 * 1000,
         })
         .json({
@@ -55,11 +55,13 @@ const getLoggedInUser = async (req, res) => {
 
 const logout = (req, res) => {
   try {
+    const { token } = req.cookies;
+    if (!token) return res.status(200).json({ message: "Already logged out" });
     res
       .clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
         maxAge: 0,
       })
       .json({ message: "logout successfully" });
