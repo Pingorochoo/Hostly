@@ -6,8 +6,8 @@ const InputPhotos = ({ setForm, photos }) => {
   const [photoLink, setPhotoLink] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
-  const handlePhotos = (filenames) => {
-    const newPhotos = Array.isArray(filenames) ? [...filenames] : [filenames];
+  const handlePhotos = (files ) => {
+    const newPhotos = Array.isArray(files) ? [...files] : [files];
     setForm((prev) => ({
       ...prev,
       photos: [...prev.photos, ...newPhotos],
@@ -19,10 +19,10 @@ const InputPhotos = ({ setForm, photos }) => {
     setUploadError(null);
 
     try {
-      const { data: filename } = await axios.post("places/photos/url", {
+      const { data } = await axios.post("places/photos/url", {
         imageUrl: photoLink,
       });
-      handlePhotos(filename);
+      handlePhotos(data);
       setPhotoLink("");
     } catch (error) {
       setUploadError(error?.response?.data?.error || "Failed to upload image");
@@ -42,10 +42,14 @@ const InputPhotos = ({ setForm, photos }) => {
     setUploadError(null);
 
     try {
-      const { data: filenames } = await axios.post("/places/photos/upload", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      handlePhotos(filenames);
+      const { data: uploadedFiles } = await axios.post(
+        "/places/photos/upload",
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      handlePhotos(uploadedFiles);
     } catch (error) {
       setUploadError(error?.response?.data?.error || "Failed to upload images");
     } finally {

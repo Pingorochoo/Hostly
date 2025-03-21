@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import { differenceInCalendarDays } from "date-fns";
 import Booking from "./components/Booking";
 import BookingListDateFormat from "./components/BookingListDateFormat";
-import apiUrl from "../../../config/api";
 
 const Bookings = () => {
   const [bookingsAndAccomodations, setBookingsAndAccomodations] = useState([]);
@@ -108,7 +107,7 @@ const Bookings = () => {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-4">
           {bookingsAndAccomodations.map(
             ({ _id, place, checkOutDate, checkInDate }) => {
               const numberOfNights = differenceInCalendarDays(
@@ -120,13 +119,13 @@ const Bookings = () => {
                 <Link
                   to={_id}
                   key={_id}
-                  className="flex flex-col md:flex-row lg:flex-col bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+                  className="group flex flex-col md:flex-row lg:flex-col bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                 >
-                  <div className="relative md:w-2/5 lg:w-full aspect-[16/9]">
+                  <div className="relative md:w-2/5 lg:w-full aspect-[16/9] overflow-hidden">
                     <img
-                      src={apiUrl + place.photos[0]}
+                      src={place.photos[0].secure_url}
                       alt={place.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   </div>

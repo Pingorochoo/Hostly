@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -30,7 +29,7 @@ const PlaceCard = ({ place }) => {
           {place.photos.map((photo, index) => (
             <div key={index} className="relative w-full h-full aspect-[4/3]">
               <img
-                src={"http://192.168.0.236:5001/" + photo}
+                src={photo.secure_url}
                 className="object-cover object-center w-full h-full group-hover:brightness-95 transition-all duration-200"
                 alt={place.title}
               />
@@ -67,17 +66,6 @@ const PlaceCard = ({ place }) => {
       </div>
     </Link>
   );
-};
-
-PlaceCard.propTypes = {
-  place: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-    photos: PropTypes.arrayOf(PropTypes.string).isRequired,
-    price: PropTypes.number.isRequired,
-    rating: PropTypes.number,
-  }).isRequired,
 };
 
 const Index = () => {

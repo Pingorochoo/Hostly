@@ -1,6 +1,5 @@
 import { useState } from "react";
 import tw from "tailwind-styled-components";
-import apiUrl from "../../../../config/api";
 
 const IconButton = tw.button`
   cursor-pointer 
@@ -29,15 +28,16 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
 
   function removePhoto() {
     setForm((prev) => ({
-      ...prev,
-      photos: photos.filter((pic) => pic !== photo),
+      ...prev,  
+      photos: photos.filter((pic) => pic.public_id !== photo.public_id),
+      deletedPhotos: [...prev.deletedPhotos, photo],
     }));
   }
 
   function selectMainPhoto() {
     setForm((prev) => ({
       ...prev,
-      photos: [photo, ...photos.filter((pic) => pic !== photo)],
+      photos: [photo, ...photos.filter((pic) => pic.public_id !== photo.public_id)],
     }));
   }
 
@@ -56,7 +56,7 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
       onMouseLeave={handleMouseLeave}
     >
       <img
-        src={apiUrl + photo}
+        src={photo.secure_url}
         className={`
           w-full h-full object-cover rounded-2xl transition-all duration-300
           ${selected ? 'ring-2 ring-primary shadow-md' : 'group-hover:brightness-95'}

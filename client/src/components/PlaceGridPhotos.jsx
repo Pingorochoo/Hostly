@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import apiUrl from "../../config/api";
 
 const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
   const [photosToShow, setPhotosToShow] = useState(2);
@@ -36,7 +35,7 @@ const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
                 }
               >
                 <img
-                  src={apiUrl + photo}
+                  src={photo.secure_url}
                   alt="place"
                   className="object-cover w-full h-full"
                 />

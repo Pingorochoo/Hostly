@@ -11,6 +11,7 @@ const PlaceForm = ({ place }) => {
     address: place?.address || "",
     description: place?.description || "",
     photos: place?.photos || [],
+    deletedPhotos: [],
     perks: place?.perks || [],
     extraInfo: place?.extraInfo || "",
     checkIn: place?.checkIn || "",
@@ -25,9 +26,19 @@ const PlaceForm = ({ place }) => {
   const handleForm = ({ target: { name, value } }) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
+  const handleRemovePhoto = (canceling = false) => {
+    const photosToRemove = canceling
+      ? [...form.photos, ...form.deletedPhotos].filter(
+          (photo) => !initialFormState.photos.includes(photo)
+        )
+      : [...form.deletedPhotos];
+    axios
+      .post("/places/cancel", { photosToRemove })
+      .catch((error) => console.error(error));
+  };
   const handleCancel = () => {
     const hasChanges = Object.keys(form).some((key) => {
+      if (key === "deletedPhotos") return false;
       if (Array.isArray(form[key])) {
         return (
           JSON.stringify(form[key]) !== JSON.stringify(initialFormState[key])
@@ -43,12 +54,12 @@ const PlaceForm = ({ place }) => {
     } else {
       navigate("/account/places");
     }
+    handleRemovePhoto(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       if (place) {
         await axios.put(`/places/${place._id}`, form);
@@ -56,7 +67,9 @@ const PlaceForm = ({ place }) => {
         await axios.post("/places", form);
       }
       navigate("/account/places");
+      handleRemovePhoto();
     } catch (error) {
+      handleRemovePhoto(true);
       console.error("Failed to save place:", error);
     } finally {
       setIsSubmitting(false);
@@ -125,6 +138,8 @@ const PlaceForm = ({ place }) => {
             onChange={handleForm}
             type="number"
             placeholder="14:00"
+            min={0}
+            max={23}
           />
 
           <FormField
@@ -135,6 +150,8 @@ const PlaceForm = ({ place }) => {
             onChange={handleForm}
             type="number"
             placeholder="11:00"
+            min={0}
+            max={23}
           />
 
           <FormField
@@ -144,6 +161,7 @@ const PlaceForm = ({ place }) => {
             value={form.maxGuests}
             onChange={handleForm}
             type="number"
+            min={1}
           />
         </div>
 

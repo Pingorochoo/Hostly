@@ -1,5 +1,3 @@
-import apiUrl from "../../config/api";
-
 const FullScreenGallery = ({ photos, title, setShowAllPhotos }) => {
   return (
     <div className="absolute inset-0 text-white h-screen w-full">
@@ -29,10 +27,10 @@ const FullScreenGallery = ({ photos, title, setShowAllPhotos }) => {
         </div>
         {photos?.length > 0 &&
           photos.map((photo) => (
-            <div key={photo}>
+            <div key={photo.secure_url}>
               <img
                 className="object-cover w-full"
-                src={apiUrl+ photo}
+                src={photo.secure_url}
                 alt="place"
               />
             </div>
