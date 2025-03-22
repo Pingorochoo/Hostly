@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -10,7 +10,7 @@ import Place from "./pages/Place/Place";
 import Bookings from "./pages/Bookings/Bookings";
 import Places from "./pages/Places/Places";
 import Profile from "./pages/Profile/Profile";
-import apiUrl from "../config/api";
+import apiUrl from "./config/api";
 axios.defaults.baseURL = apiUrl;
 axios.defaults.withCredentials = true;
 
