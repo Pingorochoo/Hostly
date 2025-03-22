@@ -1,4 +1,5 @@
 const { generateToken, verifyToken } = require("../config/jwtToken");
+const { asyncHandler } = require("../middlwares/asyncHandler");
 const User = require("../models/User");
 
 const register = async (req, res) => {

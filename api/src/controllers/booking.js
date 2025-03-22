@@ -1,4 +1,5 @@
 const { verifyToken } = require("../config/jwtToken");
+const { asyncHandler } = require("../middlwares/asyncHandler");
 const Booking = require("../models/Booking");
 
 const createBooking = async (req, res) => {
