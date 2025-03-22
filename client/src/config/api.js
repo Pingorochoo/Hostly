@@ -1,5 +1,5 @@
 const apiUrl =
-  import.meta.env.VITE_ENVIROMENT === "production"
+  import.meta.env.VITE_ENV === "production"
     ? import.meta.env.VITE_API_URL + "/"
     : window.location.hostname === "localhost"
     ? import.meta.env.VITE_LOCAL_API + "/"
