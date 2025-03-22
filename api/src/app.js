@@ -44,4 +44,8 @@ app.use(errorHandler);
 //public
 app.use(express.static(join(__dirname, "public", "uploads")));
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
+});
+
 module.exports = app;
