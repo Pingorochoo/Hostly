@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const { join } = require("path");
 const notFound = require("./middlwares/notFound");
 const errorHandler = require("./middlwares/errorHandler");
+const morgan = require("morgan");
 require("dotenv").config();
 
 //initializations
@@ -19,10 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 //middlewares
-if (process.env.NODE_ENV !== "production") {
-  const morgan = require("morgan");
-  app.use(morgan("dev"));
-}
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(
   cors({
@@ -31,6 +29,11 @@ app.use(
   })
 );
 app.use(cookieParser());
+
+app.get("/", (req, res) => {
+  res.send("API is running!");
+});
+
 //routes
 app.use(router);
 
