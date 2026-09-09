@@ -1,7 +1,7 @@
 module.exports = (err, req, res, next) => {
   console.error(err.stack);
 
-  const statusCode = err.status || 500;
+  let statusCode = err.statusCode || err.status || 500;
   const response = {
     message: err.message || 'Something went wrong',
     stack: process.env.NODE_ENV === 'production' ? null : err.stack,
