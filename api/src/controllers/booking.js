@@ -1,12 +1,17 @@
 const { verifyToken } = require("../config/jwtToken");
 const { asyncHandler } = require("../middlwares/asyncHandler");
 const Booking = require("../models/Booking");
+const { validateBookingDates } = require("../utils/bookingValidation");
 
 const createBooking = async (req, res) => {
   const { token } = req.cookies;
   const { id } = verifyToken(token);
   if (!id) return res.status(400).json("invalid accestoken");
   const { placeId, checkInDate, checkOutDate, guests } = req.body;
+
+  // Validate dates before creating booking
+  validateBookingDates(checkInDate, checkOutDate);
+
   const booking = await Booking.create({
     place: placeId,
     checkInDate,
@@ -16,6 +21,7 @@ const createBooking = async (req, res) => {
   });
   res.json(booking);
 };
+
 const getBookingsByUser = async (req, res) => {
   const { token } = req.cookies;
   const { id } = verifyToken(token);

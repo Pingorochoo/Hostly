@@ -8,15 +8,16 @@ const bookingSchema = new Schema({
   },
   checkInDate: {
     type: Date,
-    require: true,
+    required: true,
   },
   checkOutDate: {
     type: Date,
-    require: true,
+    required: true,
   },
   guests: {
     type: Number,
-    require: true,
+    required: true,
+    min: 1,
   },
   bookedBy: {
     type: Schema.Types.ObjectId,
