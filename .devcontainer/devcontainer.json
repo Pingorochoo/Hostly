@@ -1,0 +1,8 @@
+{
+  "name": "Hostly Dev",
+  "dockerComposeFile": "../compose.dev.yaml",
+  "service": "hostly-dev",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "agent",
+  "shutdownAction": "none"
+}

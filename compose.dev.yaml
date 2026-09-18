@@ -1,0 +1,34 @@
+services:
+  hostly-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    working_dir: /workspace
+
+    env_file:
+      - ${HOME}/secrets/agent-models.env
+
+    volumes:
+      - .:/workspace
+      - hostly-api-node_modules:/workspace/api/node_modules
+      - hostly-client-node_modules:/workspace/client/node_modules
+      - hostly-opencode-data:/home/agent/.local/share/opencode
+      - hostly-opencode-config:/home/agent/.config/opencode
+      - hostly-opencode-state:/home/agent/.local/state
+      - ${HOME}/agent-config:/opt/agent-config:ro
+
+    command:
+      - sh
+      - -lc
+      - |
+        set -eu
+        cp /opt/agent-config/opencode.jsonc /home/agent/.config/opencode/opencode.jsonc
+        exec sleep infinity
+
+volumes:
+  hostly-api-node_modules:
+  hostly-client-node_modules:
+  hostly-opencode-data:
+  hostly-opencode-config:
+  hostly-opencode-state:
