@@ -7,6 +7,9 @@ const Profile = () => {
     await axios.post("/users/logout");
     setUser(null);
   }
+  if (!user) {
+    return null;
+  }
   return (
     <div className="text-center max-w-lg mx-auto w-full mt-8">
       logged in as {user.name} ({user.email})<br />

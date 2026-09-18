@@ -1,27 +1,35 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../store";
-const initialForm = { email: "", password: "" };
+import { useUser, type User } from "../store";
+
+const initialForm = {
+  email: "",
+  password: ""
+};
+
 const Login = () => {
   const [form, setForm] = useState(initialForm);
   const { setUser } = useUser();
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const { data } = await axios.post("/users/login", {
+      const { data } = await axios.post<User>("/users/login", {
         email: form.email,
         password: form.password,
       });
       setUser(data);
-      // console.log(data);
       alert("login success");
-      // setForm(initialForm);
-    } catch (error) {
-      alert(`register fail error: ${error.message}`);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        alert(`login failed: ${error.message}`);
+      } else {
+        alert("login failed");
+      }
     }
   };
 
