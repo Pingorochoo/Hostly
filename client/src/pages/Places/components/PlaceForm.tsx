@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import FormField from "./FormField";
 import PlacePerkSelector from "./PlacePerkSelector";
 import InputPhotos from "./InputPhotos";
+import type { Place, PlaceFormState } from "../../../types/place";
 
-const PlaceForm = ({ place }) => {
-  const initialFormState = {
+type PlaceFormProps = {
+  place?: Place | null;
+};
+const PlaceForm = ({ place = null }: PlaceFormProps) => {
+  const initialFormState: PlaceFormState = {
     title: place?.title || "",
     address: place?.address || "",
     description: place?.description || "",
@@ -23,21 +27,26 @@ const PlaceForm = ({ place }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState(initialFormState);
 
-  const handleForm = ({ target: { name, value } }) => {
+  const handleForm = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
   const handleRemovePhoto = (canceling = false) => {
     const photosToRemove = canceling
       ? [...form.photos, ...form.deletedPhotos].filter(
-          (photo) => !initialFormState.photos.includes(photo)
+          (photo) => !initialFormState.photos.includes(photo),
         )
       : [...form.deletedPhotos];
     axios
       .post("/places/cancel", { photosToRemove })
       .catch((error) => console.error(error));
   };
+
   const handleCancel = () => {
-    const hasChanges = Object.keys(form).some((key) => {
+    const formKeys = Object.keys(form) as (keyof PlaceFormState)[];
+    const hasChanges = formKeys.some((key) => {
       if (key === "deletedPhotos") return false;
       if (Array.isArray(form[key])) {
         return (
@@ -57,7 +66,7 @@ const PlaceForm = ({ place }) => {
     handleRemovePhoto(true);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {

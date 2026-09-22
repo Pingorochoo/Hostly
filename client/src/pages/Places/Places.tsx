@@ -3,46 +3,45 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import PlaceForm from "./components/PlaceForm";
 import PlacesList from "./components/PlacesList";
+import type { Place } from "../../types/place";
 
 const Places = () => {
   const { action, id } = useParams();
   const { pathname } = useLocation();
-  const [places, setPlaces] = useState([]);
+
+  const [places, setPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [place, setPlace] = useState(null);
+  const [place, setPlace] = useState<Place | null>(null);
 
   useEffect(() => {
-    fetchUserPlaces();
-  }, [pathname]);
-  const fetchUserPlaces = async () => {
-    try {
-      if (pathname === "/account/places") {
-        const { data } = await axios.get("/places/user");
-        setPlaces(data);
-        setPlace(null);
+    const fetchPlacesData = async () => {
+      try {
+        if (pathname === "/account/places") {
+          const { data } = await axios.get<Place[]>("/places/user");
+          setPlaces(data);
+          setPlace(null);
+        } else if (action === "update" && id) {
+          const { data } = await axios.get<Place>(`/places/${id}`);
+          setPlace(data);
+        }
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          console.error("Error fetching places:", error.message);
+        } else {
+          console.error("Error fetching places");
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching places:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const fetchUserPlaceToUpdate = async () => {
-    try {
-      const { data } = await axios.get(`/places/${id}`);
-      setPlace(data);
-    } catch (error) {
-      console.error("Error fetching place:", error);
-    }
-  };
+    };
+    void fetchPlacesData();
+  }, [action, id, pathname]);
+
   if (action === "new") {
     return <PlaceForm />;
   }
 
   if (action === "update") {
-    if (!place) {
-      fetchUserPlaceToUpdate();
-    }
     return place ? <PlaceForm place={place} /> : null;
   }
 
