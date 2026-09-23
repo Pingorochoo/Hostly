@@ -1,3 +1,13 @@
+import type { ChangeEvent, ReactNode } from "react";
+type PlacePerkSelectorProps = {
+  perks: string[];
+  onPerksChange: (perks: string[]) => void;
+};
+type OptionProps = {
+  fieldName: string;
+  children: ReactNode;
+};
+
 const perksAndIcons = {
   Wifi: (
     <svg
@@ -117,18 +127,21 @@ const perksAndIcons = {
   ),
 };
 
-const PlacePerkSelector = ({ handleForm, perks }) => {
-  const handleCheckbox = ({ target: { checked, value, name } }) => {
-    if (checked) {
-      handleForm({ target: { value: [...perks, value], name } });
-    } else {
-      handleForm({
-        target: { value: perks.filter((perk) => perk !== value), name },
-      });
-    }
+const PlacePerkSelector = ({
+  perks,
+  onPerksChange,
+}: PlacePerkSelectorProps) => {
+  const handleCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+
+    const updatedPerks = checked
+      ? [...perks, value]
+      : perks.filter((perk) => perk !== value);
+
+    onPerksChange(updatedPerks);
   };
 
-  const Option = ({ fieldName, children }) => {
+  const Option = ({ fieldName, children }: OptionProps) => {
     const isSelected = perks.includes(fieldName);
     return (
       <label
@@ -166,9 +179,9 @@ const PlacePerkSelector = ({ handleForm, perks }) => {
   };
   return (
     <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-      {Object.keys(perksAndIcons).map((fieldName) => (
+      {Object.entries(perksAndIcons).map(([fieldName, icon]) => (
         <Option key={fieldName} fieldName={fieldName}>
-          {perksAndIcons[fieldName]}
+          {icon}
         </Option>
       ))}
     </div>

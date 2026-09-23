@@ -1,5 +1,13 @@
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import tw from "tailwind-styled-components";
+import type { PlaceFormState, PlacePhoto } from "../../../types/place";
+
+type AddedPhotoProps = {
+  selected: boolean;
+  photo: PlacePhoto;
+  photos: PlacePhoto[];
+  setForm: Dispatch<SetStateAction<PlaceFormState>>;
+};
 
 const IconButton = tw.button`
   cursor-pointer 
@@ -23,12 +31,12 @@ const IconButton = tw.button`
   active:scale-95
 `;
 
-const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
+const AddedPhoto = ({ selected, photo, setForm, photos }: AddedPhotoProps) => {
   const [opacity, setOpacity] = useState(" opacity-0");
 
   function removePhoto() {
     setForm((prev) => ({
-      ...prev,  
+      ...prev,
       photos: photos.filter((pic) => pic.public_id !== photo.public_id),
       deletedPhotos: [...prev.deletedPhotos, photo],
     }));
@@ -37,7 +45,10 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
   function selectMainPhoto() {
     setForm((prev) => ({
       ...prev,
-      photos: [photo, ...photos.filter((pic) => pic.public_id !== photo.public_id)],
+      photos: [
+        photo,
+        ...photos.filter((pic) => pic.public_id !== photo.public_id),
+      ],
     }));
   }
 
@@ -59,12 +70,14 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
         src={photo.secure_url}
         className={`
           w-full h-full object-cover rounded-2xl transition-all duration-300
-          ${selected ? 'ring-2 ring-primary shadow-md' : 'group-hover:brightness-95'}
+          ${selected ? "ring-2 ring-primary shadow-md" : "group-hover:brightness-95"}
         `}
         alt="place"
       />
-      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-b from-black/0 via-black/0 to-black/25${opacity} transition-opacity duration-200`} />
-      
+      <div
+        className={`absolute inset-0 rounded-2xl bg-gradient-to-b from-black/0 via-black/0 to-black/25${opacity} transition-opacity duration-200`}
+      />
+
       <IconButton
         className={`left-4${selected ? "" : opacity}`}
         onClick={selectMainPhoto}
@@ -102,9 +115,9 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
         )}
       </IconButton>
 
-      <IconButton 
-        className={`right-4${opacity}`} 
-        onClick={removePhoto} 
+      <IconButton
+        className={`right-4${opacity}`}
+        onClick={removePhoto}
         type="button"
         title="Remove photo"
       >
@@ -135,4 +148,4 @@ const AdddedPhoto = ({ selected, photo, setForm, photos }) => {
   );
 };
 
-export default AdddedPhoto;
+export default AddedPhoto;

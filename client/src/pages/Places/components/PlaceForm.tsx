@@ -9,6 +9,7 @@ import type { Place, PlaceFormState } from "../../../types/place";
 type PlaceFormProps = {
   place?: Place | null;
 };
+
 const PlaceForm = ({ place = null }: PlaceFormProps) => {
   const initialFormState: PlaceFormState = {
     title: place?.title || "",
@@ -32,6 +33,9 @@ const PlaceForm = ({ place = null }: PlaceFormProps) => {
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+  const handlePerksChange = (perks: string[]) => {
+    setForm((prev) => ({ ...prev, perks }));
   };
   const handleRemovePhoto = (canceling = false) => {
     const photosToRemove = canceling
@@ -126,7 +130,10 @@ const PlaceForm = ({ place = null }: PlaceFormProps) => {
           <p className="text-gray-500 text-sm mb-4">
             Select all the perks of your place
           </p>
-          <PlacePerkSelector perks={form.perks} handleForm={handleForm} />
+          <PlacePerkSelector
+            perks={form.perks}
+            onPerksChange={handlePerksChange}
+          />
         </div>
 
         <FormField

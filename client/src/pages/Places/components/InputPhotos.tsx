@@ -1,20 +1,31 @@
-import { useState } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type Dispatch,
+  type MouseEvent,
+  type SetStateAction,
+} from "react";
 import axios from "axios";
 import AddedPhoto from "./AddedPhoto";
+import type { PlaceFormState, PlacePhoto } from "../../../types/place";
 
-const InputPhotos = ({ setForm, photos }) => {
+type InputPhotosProps = {
+  photos: PlacePhoto[];
+  setForm: Dispatch<SetStateAction<PlaceFormState>>;
+};
+
+const InputPhotos = ({ setForm, photos }: InputPhotosProps) => {
   const [photoLink, setPhotoLink] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
-  const handlePhotos = (files ) => {
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const handlePhotos = (files: PlacePhoto | PlacePhoto[]) => {
     const newPhotos = Array.isArray(files) ? [...files] : [files];
     setForm((prev) => ({
       ...prev,
       photos: [...prev.photos, ...newPhotos],
     }));
   };
-  const addPhotoByLink = async (ev) => {
-    ev.preventDefault();
+  const addPhotoByLink = async () => {
     setIsUploading(true);
     setUploadError(null);
 
@@ -24,18 +35,23 @@ const InputPhotos = ({ setForm, photos }) => {
       });
       handlePhotos(data);
       setPhotoLink("");
-    } catch (error) {
-      setUploadError(error?.response?.data?.error || "Failed to upload image");
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ error?: string }>(error)) {
+        setUploadError(error.response?.data?.error || "Failed to upload image");
+      } else {
+        setUploadError("Failed to upload image");
+      }
     } finally {
       setIsUploading(false);
     }
   };
 
-  const uploadPhoto = async (ev) => {
-    const files = ev.target.files;
+  const uploadPhoto = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
     const data = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      data.append("photos", files[i]);
+    for (const file of Array.from(files)) {
+      data.append("photos", file);
     }
 
     setIsUploading(true);
@@ -47,11 +63,15 @@ const InputPhotos = ({ setForm, photos }) => {
         data,
         {
           headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
       );
       handlePhotos(uploadedFiles);
-    } catch (error) {
-      setUploadError(error?.response?.data?.error || "Failed to upload images");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setUploadError(error.response?.data?.error || "Failed to upload image");
+      } else {
+        setUploadError("Failed to upload image");
+      }
     } finally {
       setIsUploading(false);
     }
@@ -68,6 +88,7 @@ const InputPhotos = ({ setForm, photos }) => {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
         />
         <button
+          type="button"
           onClick={addPhotoByLink}
           className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isUploading || !photoLink}
