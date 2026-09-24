@@ -1,11 +1,20 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Place } from "../types/place";
 
-const PlaceCard = ({ place }) => {
+type PlaceSummary = Place & {
+  rating?: number;
+};
+
+type PlaceCardProps = {
+  place: PlaceSummary;
+};
+
+const PlaceCard = ({ place }: PlaceCardProps) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -16,7 +25,7 @@ const PlaceCard = ({ place }) => {
     autoplay: true,
     autoplaySpeed: 3000,
     adaptiveHeight: false,
-    pauseOnHover: false
+    pauseOnHover: false,
   };
 
   return (
@@ -69,25 +78,33 @@ const PlaceCard = ({ place }) => {
 };
 
 const Index = () => {
-  const [places, setPlaces] = useState([]);
+  const [places, setPlaces] = useState<PlaceSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchPlaces = async () => {
+  const fetchPlaces = useCallback(async () => {
     try {
-      const { data } = await axios.get("/places");
+      setIsLoading(true);
+      setError(null);
+
+      const { data } = await axios.get<PlaceSummary[]>("/places");
       setPlaces(data);
-    } catch (err) {
+    } catch (error: unknown) {
       setError("Couldn't load places. Please try again later.");
-      console.error("Failed to fetch places:", err);
+
+      if (axios.isAxiosError(error)) {
+        console.error("Failed to fetch places:", error.message);
+      } else {
+        console.error("Failed to fetch places:", error);
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchPlaces();
-  }, []);
+    void fetchPlaces();
+  }, [fetchPlaces]);
 
   if (error) {
     return (
