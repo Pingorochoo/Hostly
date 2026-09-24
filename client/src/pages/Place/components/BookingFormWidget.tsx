@@ -1,9 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-const BookingFormWidget = ({ place }) => {
-  const initialForm = {
+import type { Place } from "../../../types/place";
+import type { BookingFormState } from "../../../types/booking";
+
+type BookingFormWidgetProps = {
+  place: Place;
+};
+
+const BookingFormWidget = ({ place }: BookingFormWidgetProps) => {
+  const initialForm: BookingFormState = {
     placeId: "",
     checkInDate: "",
     checkOutDate: "",
@@ -16,7 +23,7 @@ const BookingFormWidget = ({ place }) => {
     setForm((prev) => ({ ...prev, placeId: place._id }));
   }, [place]);
   if (!place) return;
-  function handleForm(e) {
+  function handleForm(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     if (name === "checkInDate" || name === "checkOutDate") {
       let nights = 0;
@@ -36,9 +43,13 @@ const BookingFormWidget = ({ place }) => {
       [name]: value,
     }));
   }
-  function booking() {
-    axios.post("/booking", form).then(({ data }) => console.log(data));
-    navigate("/account/bookings");
+  async function booking() {
+    try {
+      await axios.post("/booking", form);
+      navigate("/account/bookings");
+    } catch (error: unknown) {
+      console.error("Error creating booking:", error);
+    }
   }
 
   return (

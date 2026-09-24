@@ -3,11 +3,18 @@ import { useState } from "react";
 import BookingListDateFormat from "./BookingListDateFormat";
 import PlaceGridPhotos from "../../../components/PlaceGridPhotos";
 import FullScreenGallery from "../../../components/FullScreenGallery";
+import type { Booking as BookingType } from "../../../types/booking";
 
-const Booking = ({ booking: { place, checkOutDate, checkInDate } }) => {
+type BookingProps = {
+  booking: BookingType;
+};
+
+const Booking = ({
+  booking: { place, checkOutDate, checkInDate },
+}: BookingProps) => {
   const numberOfNights = differenceInCalendarDays(
     new Date(checkOutDate),
-    new Date(checkInDate)
+    new Date(checkInDate),
   );
   const [showAllPhotos, setShowAllPhotos] = useState(false);
 
