@@ -1,4 +1,17 @@
-const FullScreenGallery = ({ photos, title, setShowAllPhotos }) => {
+import type { Dispatch, SetStateAction } from "react";
+import type { PlacePhoto } from "../types/place";
+
+type FullScreenGalleryProps = {
+  photos: PlacePhoto[];
+  title: string;
+  setShowAllPhotos: Dispatch<SetStateAction<boolean>>;
+};
+
+const FullScreenGallery = ({
+  photos,
+  title,
+  setShowAllPhotos,
+}: FullScreenGalleryProps) => {
   return (
     <div className="absolute inset-0 text-white h-screen w-full">
       <div className="p-8 grid gap-4 bg-black">

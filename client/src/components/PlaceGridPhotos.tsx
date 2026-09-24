@@ -1,6 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
-const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
+import type { PlacePhoto } from "../types/place";
+
+type PlaceGridPhotosProps = {
+  photos: PlacePhoto[];
+  setShowAllPhotos: Dispatch<SetStateAction<boolean>>;
+};
+
+const PlaceGridPhotos = ({
+  photos,
+  setShowAllPhotos,
+}: PlaceGridPhotosProps) => {
   const [photosToShow, setPhotosToShow] = useState(2);
 
   useEffect(() => {
@@ -22,7 +32,7 @@ const PlaceGridPhotos = ({ photos, setShowAllPhotos }) => {
       <div className="grid grid-cols-4 grid-rows-2 gap-2 h-96 rounded-2xl overflow-hidden">
         {photos.length > 0 &&
           photos.map((photo, i) => {
-            if (i > photosToShow) return "";
+            if (i > photosToShow) return null;
             return (
               <div
                 key={i}
