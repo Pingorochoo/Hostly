@@ -1,8 +1,15 @@
 import { Link } from "react-router-dom";
+import type { Dispatch, SetStateAction } from "react";
+import type { Place } from "../../../types/place";
 
-const PlacesList = ({ places, setPlace }) => {
+type PlacesListProps = {
+  places: Place[];
+  setPlace: Dispatch<SetStateAction<Place | null>>;
+};
+
+const PlacesList = ({ places, setPlace }: PlacesListProps) => {
   if (!places.length) return null;
-  const handleClick = (place) => {
+  const handleClick = (place: Place) => {
     setPlace(place);
   };
   return (
