@@ -4,15 +4,30 @@ import { useParams } from "react-router-dom";
 import FullScreenGallery from "../../components/FullScreenGallery";
 import PlaceGridPhotos from "../../components/PlaceGridPhotos";
 import BookingFormWidget from "./components/BookingFormWidget";
+import type { Place as PlaceType } from "../../types/place";
 
 const Place = () => {
-  const [place, setPlace] = useState(null);
+  const [place, setPlace] = useState<PlaceType | null>(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     if (!id) return;
-    axios.get(`/places/${id}`).then(({ data }) => setPlace(data));
+
+    const fetchPlace = async () => {
+      try {
+        const { data } = await axios.get<PlaceType>(`/places/${id}`);
+        setPlace(data);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          console.error("Failed to fetch place:", error.message);
+        } else {
+          console.error("Failed to fetch place:", error);
+        }
+      }
+    };
+
+    void fetchPlace();
   }, [id]);
 
   if (!place) return null;
