@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
 
-const AccountNavbar = ({ subpage }) => {
-  const navClasses = (type = "") => {
+type Subpage = "profile" | "bookings" | "places" | "";
+
+type AccountNavbarProps = {
+  subpage: Subpage;
+};
+
+const AccountNavbar = ({ subpage }: AccountNavbarProps) => {
+  const navClasses = (type: Subpage = "") => {
     let classes = "flex items-center gap-1 py-2 px-3 rounded-full ";
     if (type === subpage) {
       classes += "bg-primary text-white";

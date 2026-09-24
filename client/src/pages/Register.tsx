@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 const initialForm = { name: "", email: "", password: "" };
 const Register = () => {
   const [form, setForm] = useState(initialForm);
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await axios.post("/users/register", {
@@ -16,8 +16,12 @@ const Register = () => {
         password: form.password,
       });
       alert("register success");
-    } catch (error) {
-      alert(`register fail error: ${error.message}`);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        alert(`register fail error: ${error.message}`);
+      } else {
+        alert("register failed");
+      }
     }
 
     // setForm(initialForm);
